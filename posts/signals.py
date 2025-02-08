@@ -13,4 +13,7 @@ def generate_slag_for_post(sender, instance, **kwargs):
     count = 0
     while PostModel.objects.filter(slug=slug).exists():
         slug = f"{original_blog}-{count}"
+        count += 1
+
+    instance.slug = slug
 
