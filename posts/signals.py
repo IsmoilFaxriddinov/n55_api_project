@@ -16,4 +16,5 @@ def generate_slag_for_post(sender, instance, **kwargs):
         count += 1
 
     instance.slug = slug
+    instance.save()
 
