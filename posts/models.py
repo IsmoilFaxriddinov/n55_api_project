@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 from django.contrib.auth.models import User
 
 class PostModel(models.Model):
@@ -9,8 +10,9 @@ class PostModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, **kwargs):
-        slug = 
-        return super().save(**kwargs)
+        slug = slugify(self.title)
+        self.slug = slug
+        super().save(**kwargs)
 
     def __str__(self):
         return self.title
