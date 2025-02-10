@@ -16,5 +16,5 @@ def generate_slag_for_post(sender, instance, **kwargs):
             slug = f"{original_blog}-{count}"
             count += 1
 
-    instance.slug = slug
+        instance.slug = slug
 
