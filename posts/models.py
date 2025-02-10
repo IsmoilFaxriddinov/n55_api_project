@@ -10,7 +10,12 @@ class PostModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, **kwargs):
-        slug = slugify(self.title)
+        original_slug = slugify(self.title)
+        slug = original_slug
+        count = 0
+        while PostModel.objects.filter(slug=slug).exists():
+            slug = f"{original_slug}-{count}"
+            count += 1
         self.slug = slug
         super().save(**kwargs)
 
