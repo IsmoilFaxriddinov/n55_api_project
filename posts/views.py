@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -11,6 +12,7 @@ from posts.serializers import PostsSerializers
 
 class PostAPIView(APIView):
     serializer_class = PostsSerializers
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
@@ -20,6 +22,10 @@ class PostAPIView(APIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
+        print(request.user)
+        print(request.auth)
+        print(request.auth.get('username'))
+        print(request.auth.get('n55'))
         posts = PostModel.objects.all()
         serializer = self.serializer_class(posts, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
