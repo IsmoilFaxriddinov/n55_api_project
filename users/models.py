@@ -1,4 +1,5 @@
 from django.db import models
+from app_common.models import BaseModel
 from django.core.validators import FileExtensionValidator
 from django.contrib.auth.models import User
 
@@ -15,4 +16,12 @@ class ProfileModel(models.Model):
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'
-        
+
+class ConfirmationModel(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='codes')
+    code = models.PositiveSmallIntegerField()
+    expire_minut = models.PositiveSmallIntegerField()
+
+    def __str__(self):
+        return str(self.code)
+    
