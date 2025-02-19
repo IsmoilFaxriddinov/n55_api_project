@@ -29,7 +29,6 @@ class RegisterAPIView(APIView):
 
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
-
 class VerifyEmailAPIView(APIView):
     serailizer_class = VerifyEmailSerializer
 
@@ -42,7 +41,7 @@ class VerifyEmailAPIView(APIView):
         user_code.user.save()
         tokens = user_code.user.get_tokens()
         user_code.delete()
-
+        
         return Response(data=tokens, status=status.HTTP_200_OK)
 
 class LoginAPIView(APIView):
