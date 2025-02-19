@@ -1,6 +1,5 @@
 from datetime import timedelta
 from django.utils import timezone
-from django.core.serializers import serialize
 from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
@@ -9,7 +8,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from users.models import VerificationModel
 
 User = get_user_model()
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):

@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+
 from users.serializers import LoginSerializer, RegisterSerializer, VerifyEmailSerializer
 from users.utils import send_email_confirmation
 
@@ -55,3 +56,4 @@ class LoginAPIView(APIView):
         tokens = user.get_tokens(user=user)
 
         return Response(data=tokens, status=status.HTTP_200_OK)
+    
