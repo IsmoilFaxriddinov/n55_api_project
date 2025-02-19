@@ -1,13 +1,48 @@
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.utils import timezone
-from datetime import datetime, timedelta
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.urls import reverse
 
-def get_tokens_for_user(user):
-    refresh = RefreshToken.for_user(user)
-    refresh.set_exp(from_time=timezone.now(), lifetime=timedelta(minutes=1))
-    # refresh.access_token.set_exp(from_time=timezone.now(), lifetime=timedelta(minutes=1))
+def send_email_confirmation(user, code):
+    subject = "Confirm Your Email Address"
+    
+    html_message = render_to_string(
+        template_name='auth/email_confirmation.html',
+        context={
+            'user': user,
+            'code': code,
+        }
+    )
 
-    return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    }
+    email = EmailMessage(
+        subject=subject,
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[user.email],
+    )
+
+    email.content_subtype = 'html'
+    email.send()
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+
+def send_email_confirmation(user, code):
+    subject = "Confirm Your Email Address"
+
+    html_message = render_to_string(
+        template_name='auth/email_confirmation.html',
+        context={
+            'user': user,
+            'code': code,
+        }
+    )
+
+    email = EmailMessage(
+        subject=subject,
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[user.email],
+    )
+
+    email.content_subtype = 'html'
+    email.send()

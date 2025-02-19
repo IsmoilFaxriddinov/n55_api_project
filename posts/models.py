@@ -1,8 +1,9 @@
 from django.db import models
-from django.utils.text import slugify
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from app_common.models import BaseModel
+
+User = get_user_model()
 
 class TopicModel(BaseModel):
     title = models.CharField(max_length=125)
