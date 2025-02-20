@@ -1,3 +1,4 @@
+from encodings.punycode import T
 import random
 from django.db import models
 from app_common.models import BaseModel
@@ -35,7 +36,7 @@ User = get_user_model()
 class VerificationModel(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='code')
     code = models.PositiveSmallIntegerField()
-    expire_minutes = models.PositiveSmallIntegerField()
+    expire_minutes = models.PositiveSmallIntegerField(default=2)
 
     def __str__(self):
         return str(self.code)

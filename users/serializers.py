@@ -1,3 +1,5 @@
+import random
+import threading
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth import authenticate, get_user_model
@@ -6,6 +8,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from users.models import VerificationModel
+from users.utils import get_verification_code, send_email_confirmation
 
 User = get_user_model()
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -65,6 +68,37 @@ class VerifyEmailSerializer(serializers.Serializer):
         return attrs
 
 
+class RecendVerifyEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+
+        user_code = VerificationModel.objects.filter(user__email=email).first()
+        if not user_code:
+            raise serializers.ValidationError('Verification code not found')
+
+        current_time = timezone.now()
+        expiration_time = user_code.created_at + timedelta(minutes=user_code.expire_minutes)
+
+        if current_time > expiration_time:
+            user = user_code.user
+            user_code.delete()
+
+            verification_code = str(random.randint(1000, 9999))
+            VerificationModel.objects.create(user=user, code=verification_code, expire_minutes=5)
+
+            email_thread = threading.Thread(target=send_email_confirmation, args=(user, verification_code))
+            email_thread.start()
+        else:
+            raise serializers.ValidationError('You have an active code')
+
+        attrs['user'] = user
+        attrs['verification_code'] = verification_code
+        return attrs
+
+
+
 class LoginSerializer(serializers.Serializer):
     email_or_username = serializers.CharField()
     password = serializers.CharField()
@@ -93,3 +127,36 @@ class LoginSerializer(serializers.Serializer):
         
         attrs['user'] = authenticated_user
         return authenticated_user
+
+class UserSerializer(serializers.ModelSerializer):
+    short_bio = serializers.CharField(source="profile.short_bio")
+    avatar = serializers.ImageField(source="profile.avatar")
+    about = serializers.CharField(source="profile.about")
+    pronouns = serializers.CharField(source="profile.pronouns")
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'username', 'short_bio', 'avatar', 'about', 'pronouns']
+    
+
+    def update(self, instance, validated_data):
+        # Extract nested profile data
+        profile_data = validated_data.pop("profile", {})
+
+        # Update User fields if necessary
+        instance.first_name = validated_data.get("first_name", instance.first_name)
+        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.email = validated_data.get("email", instance.email)
+        instance.username = validated_data.get("username", instance.username)
+        instance.save()
+
+        # Update Profile fields
+        profile = instance.profile  # Get the related profile instance
+        profile.short_bio = profile_data.get("short_bio", profile.short_bio)
+        profile.avatar = profile_data.get("avatar", profile.avatar)
+        profile.about = profile_data.get("about", profile.about)
+        profile.pronouns = profile_data.get("pronouns", profile.pronouns)
+        profile.save()
+
+        return instance
+

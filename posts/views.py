@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound
@@ -8,7 +7,6 @@ from rest_framework.response import Response
 
 from posts.models import PostModel
 from posts.serializers import PostsSerializers
-
 
 class PostAPIView(APIView):
     serializer_class = PostsSerializers
