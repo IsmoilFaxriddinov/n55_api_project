@@ -100,3 +100,4 @@ class PersonalListView(ListAPIView):
 
     def get_queryset(self):
         return PostModel.objects.filter(author=self.request.user)
+

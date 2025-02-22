@@ -124,7 +124,7 @@ class LoginSerializer(serializers.Serializer):
                 "success": False,
                 "detail": "Username or passsword is invalid"
             })
-        
+            
         attrs['user'] = authenticated_user
         return authenticated_user
 
@@ -160,3 +160,17 @@ class UserSerializer(serializers.ModelSerializer):
 
         return instance
 
+class UpdatePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(max_length=125)
+    new_password1 = serializers.CharField(max_length=125)
+    new_password2 = serializers.CharField(max_length=125)
+
+    def validate(self, attrs):
+        new_password1 = attrs.get('new_password1')
+        new_password2 = attrs.get('new_password2')
+        
+        if new_password1 != new_password2:
+            raise serializers.ValidationError("Passwords does not match")
+        
+        validate_password(password=new_password1)
+        return attrs

@@ -2,12 +2,14 @@ import random
 import threading
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from django.contrib.auth import authenticate
 
 
-from users.serializers import LoginSerializer, RecendVerifyEmailSerializer, RegisterSerializer, UserSerializer, VerifyEmailSerializer
+from users.serializers import LoginSerializer, RecendVerifyEmailSerializer, RegisterSerializer, UpdatePasswordSerializer, UserSerializer, VerifyEmailSerializer
 from users.utils import get_verification_code, send_email_confirmation
 
 
@@ -99,3 +101,18 @@ class UserProfileView(APIView):
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
      
+class UpdatePasswordAPIView(APIView):
+    serializer_class = UpdatePasswordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+
+        authenticated_user = authenticate(username=user.username, password=serializer.validated_data['old_password'])
+        if authenticated_user is None:
+            raise serializers.ValidationError("Old passsword is invalid ⚠️")
+        user.set_password(raw_password=serializer.validated_data['new_password1'])
+        user.save()
+        return Response(data={'detail': "Password updated"}, status=status.HTTP_202_ACCEPTED)
