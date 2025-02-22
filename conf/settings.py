@@ -143,8 +143,23 @@ AUTH_USER_MODEL = 'users.CustomUserModel'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10
 }
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,  # Disable session auth in Swagger
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description': 'Enter JWT token as: Bearer <your_token>'
+        }
+    },
+}
+
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),

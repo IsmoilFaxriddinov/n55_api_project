@@ -5,28 +5,32 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from app_common.paginations import StandardResultsSetPagination
 from posts.models import PostModel
 from posts.serializers import PostsSerializers
 
 class PostAPIView(APIView):
     serializer_class = PostsSerializers
     permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save(author=request.user)
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
-        print(request.user)
-        print(request.auth)
-        print(request.auth.get('username'))
-        print(request.auth.get('n55'))
         posts = PostModel.objects.all()
-        serializer = self.serializer_class(posts, many=True)
+        paginator = self.pagination_class()
+        paginated_posts = paginator.paginate_queryset(posts, request)
+
+        serializer = self.serializer_class(paginated_posts, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+    
+    def get_serialiser(self, *args, **kwargs):
+        return self.serializer_class(*args, **kwargs)
 
 
 class PostDetailAPIView(APIView):

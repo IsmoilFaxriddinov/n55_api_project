@@ -100,7 +100,7 @@ class RecendVerifyEmailSerializer(serializers.Serializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    email_or_username = serializers.CharField()
+    email_or_username = serializers.CharField(max_length=125)
     password = serializers.CharField()
 
     def validate(self, attrs):

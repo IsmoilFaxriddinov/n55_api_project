@@ -32,6 +32,8 @@ class RegisterAPIView(APIView):
         email_thread.start()
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         
+    def get_serializer(self, *args, **kwargs):
+        return self.serializer_class(*args, **kwargs)
 
 class VerifyEmailAPIView(APIView):
     serailizer_class = VerifyEmailSerializer
@@ -47,6 +49,9 @@ class VerifyEmailAPIView(APIView):
         user_code.delete()
         
         return Response(data=tokens, status=status.HTTP_200_OK)
+    
+    def get_serializer(self, *args, **kwargs):
+        return self.serializer_class(*args, **kwargs)
 
 class ResendVerificationCodeAPIView(APIView):
     serailizer_class = RecendVerifyEmailSerializer
@@ -56,6 +61,9 @@ class ResendVerificationCodeAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         
         return Response(data={"success": True, "detail": "Code is send"}, status=status.HTTP_200_OK)
+
+    def get_serializer(self, *args, **kwargs):
+        return self.serializer_class(*args, **kwargs)
 
 class LoginAPIView(APIView):
     permission_classes = [AllowAny]
@@ -69,6 +77,9 @@ class LoginAPIView(APIView):
         tokens = user.get_tokens()
 
         return Response(data=tokens, status=status.HTTP_200_OK)
+    
+    def get_serializer(self, *args, **kwargs):
+        return self.serializer_class(*args, **kwargs)
     
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -84,4 +95,7 @@ class UserProfileView(APIView):
         serializer.save()
 
         return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
+    
+    def get_serializer(self, *args, **kwargs):
+        return self.serializer_class(*args, **kwargs)
      
