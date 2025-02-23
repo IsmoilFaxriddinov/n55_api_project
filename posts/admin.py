@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from posts.models import PostCommentModel
+
+admin.site.register(PostCommentModel)

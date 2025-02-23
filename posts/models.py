@@ -47,7 +47,7 @@ class PostCommentModel(BaseModel):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='post_comments', null=True)
     post = models.ForeignKey(PostModel, on_delete=models.CASCADE, related_name='comments')
     comment = models.TextField()
-    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children')
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True)
 
     def __str__(self):
         return f"{self.user.username} comment to {self.post.id} like {self.comment}"
@@ -58,7 +58,7 @@ class PostCommentModel(BaseModel):
 
 class PostCommentClapModel(BaseModel):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='post_comments_claps', null=True)
-    comment = models.ForeignKey(PostCommentModel, on_delete=models.CASCADE, related_name='comments')
+    comment = models.ForeignKey(PostCommentModel, on_delete=models.CASCADE, related_name='claps')
 
     def __str__(self):
         return f"{self.comment.comment} clapped by {self.user.username}"
