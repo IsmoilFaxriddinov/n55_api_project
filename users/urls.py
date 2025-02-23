@@ -12,6 +12,8 @@ urlpatterns = [
     path('resend/code/', ResendVerificationCodeAPIView.as_view(), name='login'),
     path('me/', UserProfileView.as_view(), name='me'),
     path('password/', UpdatePasswordAPIView.as_view(), name='update_password'),
-    path('logout/', TokenBlacklistView.as_view(), name='token_blacklist'),\
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    path('logout/', TokenBlacklistView.as_view(), name='token_blacklist'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    path('follow/', TokenRefreshView.as_view(), name='follow')
 ]

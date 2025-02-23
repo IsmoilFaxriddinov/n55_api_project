@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from posts.models import PostModel, TopicModel
+from posts.models import PostClapModel, PostModel, TopicModel
 
 User = get_user_model()
 
@@ -36,4 +36,16 @@ class PostsSerializers(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data['author'] = PostAuthorSerializer(instance=instance.author).data
         return data
+
+class PostClapsUserSerializer(serializers.ModelSerializer):
+    short_bio = serializers.CharField(source="profile.short_bio")
+    avatar = serializers.ImageField(source="profile.avatar")
+    is_followed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['short_bio', 'avatar', 'username', 'is_followed']
     
+    @staticmethod
+    def get_is_followed(obj):
+        return True
