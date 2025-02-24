@@ -50,31 +50,4 @@ class PostClapsUserSerializer(serializers.ModelSerializer):
     def get_is_followed(obj):
         return True
 
-class PostCommentSerializer(serializers.Serializer):
-    claps_count = serializers.SerializerMethodField()
-    child_count = serializers.SerializerMethodField()
-
-    class Meta:
-        model = PostCommentModel
-        fields = ['user', 'comment', 'created_at', 'claps_count', 'child_count']
-
-    @staticmethod
-    def get_claps_count(obj):
-        return obj.claps.count()
-    
-    @staticmethod
-    def get_child_count(obj):
-        return obj.children.count()
-    
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        # data['user'] = PostClapsUserSerializer(instance=instance.user)
-        return data
-
-class PostCommentModelSerializer(serializers.ModelSerializer):
-    slug = serializers.SlugField()
-    class Meta:
-        model = PostCommentModel
-        fields = ['comment', 'parent', 'slug']
-
     

@@ -149,23 +149,3 @@ class PostClapsAPIView(APIView):
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
 
-class PostCommentListAPIView(ListAPIView):
-    # queryset = PostCommentModel.objects.all()
-    pagination_class = StandardResultsSetPagination
-    permission_classes = [IsAuthenticated]
-    serializer_class = PostCommentSerializer
-
-    def get_queryset(self):
-        return PostCommentModel.objects.all().order_by('-id')
-
-class PostCommentCreateAPIView(CreateAPIView):
-    queryset = PostCommentModel.objects.all()
-    permission_classes = [IsAuthenticated]
-    serializer_class = PostCommentModelSerializer
-
-    # def get_object(self, slug):
-    #     return PostModel.objects.get(slug=slug)
-
-    # def perform_create(self, serializer):
-    #     serializer.is_valid
-    #     PostCommentModel.objects.create(user=self.request.user, post=self.get_object(slug=serializer.validated))
