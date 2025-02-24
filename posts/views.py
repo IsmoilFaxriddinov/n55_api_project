@@ -9,8 +9,8 @@ from django.contrib.auth import get_user_model
 
 from app_common.paginations import StandardResultsSetPagination
 from app_common.permissions import IsOwnerOrReadOnly
-from posts.models import PostClapModel, PostCommentModel, PostModel
-from posts.serializers import PostClapsUserSerializer, PostCommentModelSerializer, PostCommentSerializer, PostsSerializers
+from posts.models import PostClapModel, PostModel
+from posts.serializers import PostClapsUserSerializer, PostsSerializers
 
 User = get_user_model()
 
