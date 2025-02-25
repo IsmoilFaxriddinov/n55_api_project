@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from posts.models import PostModel, TopicModel
+from posts.models import PostCommentClapModel, PostCommentModel, PostModel, TopicModel
 
 User = get_user_model()
 
@@ -50,4 +50,19 @@ class PostClapsUserSerializer(serializers.ModelSerializer):
     def get_is_followed(obj):
         return True
 
+class PostCommentSerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+    user = serializers.StringRelatedField()
+
+    class Meta:
+        model = PostCommentModel
+        fields = ['id', 'parent', 'comment', 'user', 'children']
     
+    @staticmethod
+    def get_children(obj):
+        return obj.children.count()
+
+class PostCommentClapSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PostCommentClapModel
+        fields = []

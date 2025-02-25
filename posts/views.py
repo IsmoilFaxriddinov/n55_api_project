@@ -3,14 +3,14 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, CreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, ListCreateAPIView, get_object_or_404
 from django.db.models import Count
 from django.contrib.auth import get_user_model
 
 from app_common.paginations import StandardResultsSetPagination
 from app_common.permissions import IsOwnerOrReadOnly
-from posts.models import PostClapModel, PostModel
-from posts.serializers import PostClapsUserSerializer, PostsSerializers
+from posts.models import PostClapModel, PostCommentClapModel, PostCommentModel, PostModel
+from posts.serializers import PostClapsUserSerializer, PostCommentClapSerializer, PostCommentSerializer, PostsSerializers
 
 User = get_user_model()
 
@@ -149,3 +149,56 @@ class PostClapsAPIView(APIView):
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
 
+class PostCommentListCreateAPIView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+    serializer_class = PostCommentSerializer
+
+    def get_queryset(self):
+        post = get_object_or_404(PostModel, slug=self.kwargs['slug'])
+        return PostCommentModel.objects.filter(post=post).order_by('-id')
+
+    def perform_create(self, serializer):
+        post = get_object_or_404(PostModel, slug=self.kwargs['slug'])
+        return serializer.save(post=post, user=self.request.user)
+    
+
+class CommentChildrenListAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+    serializer_class = PostCommentSerializer
+
+    def get_queryset(self):
+        comment = get_object_or_404(PostCommentModel, id=self.kwargs['pk'])
+        return PostCommentModel.objects.filter(parent=comment).order_by('-id')
+
+class CommentClapsListCreateAPIView(ListCreateAPIView):
+    serializer_class = PostClapsUserSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    def create(self, request, *args, **kwargs):
+        comment = get_object_or_404(PostCommentModel, id=self.kwargs['pk'])
+        PostCommentClapModel.objects.create(user=self.request.user, comment=comment)
+        claps_count = PostCommentClapModel.objects.filter(user=self.request.user, comment=comment).count()
+        print(claps_count)
+
+        return Response(data={'claps_count': claps_count}, status=status.HTTP_201_CREATED)
+
+    def list(self, request, *args, **kwargs):
+        comment = get_object_or_404(PostCommentModel, id=self.kwargs['pk'])
+
+        claps = PostCommentClapModel.objects.filter(comment=comment)
+
+        claps_count = claps.count()
+
+        users_id = claps.values('user_id').annotate(count=Count('id')).values_list('user_id', flat=True)
+
+        users = User.objects.filter(id__in=users_id).order_by('-id')
+
+        page = self.paginate_queryset(users)
+        if page is not None:
+            serializer = self.serializer_class(page, many=True)
+        else:
+            serializer = self.serializer_class(users, many=True)
+        return Response({"claps count": claps_count, "users_count": users.count(), "users": serializer.data})
