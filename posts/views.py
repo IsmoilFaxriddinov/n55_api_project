@@ -3,12 +3,13 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, ListCreateAPIView, get_object_or_404
 from django.db.models import Count
 from django.contrib.auth import get_user_model
 
 from app_common.paginations import StandardResultsSetPagination
-from app_common.permissions import IsOwnerOrReadOnly
+from app_common.permissions import IsCommentOwner, IsOwnerOrReadOnly
 from posts.models import PostClapModel, PostCommentClapModel, PostCommentModel, PostModel
 from posts.serializers import PostClapsUserSerializer, PostCommentClapSerializer, PostCommentSerializer, PostsSerializers
 
@@ -163,14 +164,31 @@ class PostCommentListCreateAPIView(ListCreateAPIView):
         return serializer.save(post=post, user=self.request.user)
     
 
-class CommentChildrenListAPIView(ListAPIView):
-    permission_classes = [IsAuthenticated]
+class CommentChildrenListAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsCommentOwner]
     pagination_class = StandardResultsSetPagination
     serializer_class = PostCommentSerializer
 
-    def get_queryset(self):
+    def get(self, request, *args, **kwargs):
         comment = get_object_or_404(PostCommentModel, id=self.kwargs['pk'])
-        return PostCommentModel.objects.filter(parent=comment).order_by('-id')
+        children =  PostCommentModel.objects.filter(parent=comment).order_by('-id')
+        paginator = self.pagination_class()
+        paginated_posts = paginator.paginate_queryset(children, self.request)
+        serializer = self.serializer_class(paginated_posts, many=True)
+        print(children.exists())
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+    
+    def put(self, request, *args, **kwargs):
+        comment = get_object_or_404(PostCommentModel, id=self.kwargs['pk'])
+        self.check_object_permissions(request, comment)
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        comment.comment = serializer.validated_data['comment']
+        comment.save()
+        return Response(data='updated', status=status.HTTP_202_ACCEPTED)
+
+    def delete(self, request, *args, **kwargs):
+        ...
 
 class CommentClapsListCreateAPIView(ListCreateAPIView):
     serializer_class = PostClapsUserSerializer
