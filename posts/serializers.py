@@ -68,3 +68,8 @@ class PostCommentClapSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostCommentClapModel
         fields = []
+
+class TopicModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TopicModel
+        fields = ['id', 'title']
