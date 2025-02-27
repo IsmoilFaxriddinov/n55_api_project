@@ -1,4 +1,5 @@
 import random
+import re
 import threading
 from datetime import timedelta
 from django.utils import timezone
@@ -7,7 +8,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
-from users.models import VerificationModel
+from users.models import FollowModel, VerificationModel
 from users.utils import get_verification_code, send_email_confirmation
 
 User = get_user_model()
@@ -174,3 +175,8 @@ class UpdatePasswordSerializer(serializers.Serializer):
         
         validate_password(password=new_password1)
         return attrs
+
+class FollowUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FollowModel
+        fields = ['to_user']

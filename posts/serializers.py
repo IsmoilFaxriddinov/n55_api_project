@@ -1,3 +1,4 @@
+from urllib import request
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from posts.models import PostCommentClapModel, PostCommentModel, PostModel, TopicModel
@@ -46,9 +47,10 @@ class PostClapsUserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['short_bio', 'avatar', 'username', 'is_followed']
     
-    @staticmethod
-    def get_is_followed(obj):
-        return True
+    def get_is_followed(self, obj):
+        user = self.context.get('user')
+        return user.following.filter(to_user_id=obj.id).exists()
+    
 
 class PostCommentSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()

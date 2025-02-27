@@ -58,3 +58,14 @@ class ProfileModel(models.Model):
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'
+
+class FollowModel(BaseModel):
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
+
+    def __str__(self):
+        return f"{self.from_user.username} following to {self.to_user.username}"
+    
+    class Meta:
+        verbose_name = 'follower'
+        verbose_name_plural = 'followers'

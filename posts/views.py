@@ -122,7 +122,7 @@ class PostClapsAPIView(APIView):
 
         paginator = self.pagination_class()
         paginated_posts = paginator.paginate_queryset(users_object, request)
-        serializer = self.serializer_class(paginated_posts, many=True)
+        serializer = self.serializer_class(paginated_posts, many=True, context={'user': request.user})
         return Response(data={"claps_count": claps_count, 'users_count': users_count, "users": serializer.data}, status=status.HTTP_200_OK)
     
     def post(self, request, slug):
