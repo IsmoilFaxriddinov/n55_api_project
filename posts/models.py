@@ -3,7 +3,9 @@ from django.contrib.auth import get_user_model
 
 from app_common.models import BaseModel
 
+
 User = get_user_model()
+
 
 class TopicModel(BaseModel):
     title = models.CharField(max_length=125)
@@ -14,6 +16,7 @@ class TopicModel(BaseModel):
     class Meta:
         verbose_name = 'topic'
         verbose_name_plural = 'topics'
+
 
 class PostModel(BaseModel):
     image = models.ImageField(upload_to='posts')
@@ -30,6 +33,7 @@ class PostModel(BaseModel):
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
+
 
 class PostClapModel(BaseModel):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='post_claps', null=True)
@@ -56,6 +60,7 @@ class PostCommentModel(BaseModel):
         verbose_name = 'post comment'
         verbose_name_plural = 'post comments'
 
+
 class PostCommentClapModel(BaseModel):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='post_comments_claps', null=True)
     comment = models.ForeignKey(PostCommentModel, on_delete=models.CASCADE, related_name='claps')
@@ -66,6 +71,7 @@ class PostCommentClapModel(BaseModel):
     class Meta:
         verbose_name = 'post comment clap'
         verbose_name_plural = 'post comments claps'
+
 
 class FollowTopicModel(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='topics')

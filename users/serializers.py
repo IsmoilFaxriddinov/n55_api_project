@@ -1,5 +1,4 @@
 import random
-import re
 import threading
 from datetime import timedelta
 from django.utils import timezone
@@ -9,7 +8,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from users.models import FollowModel, VerificationModel
-from users.utils import get_verification_code, send_email_confirmation
+from users.utils import send_email_confirmation
 
 User = get_user_model()
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

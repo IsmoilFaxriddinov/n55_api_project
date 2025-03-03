@@ -1,4 +1,3 @@
-from ast import Try
 import random
 import threading
 from rest_framework.permissions import IsAuthenticated
@@ -12,8 +11,10 @@ from django.contrib.auth import authenticate
 
 
 from users.models import FollowModel
-from users.serializers import FollowUserSerializer, LoginSerializer, RecendVerifyEmailSerializer, RegisterSerializer, UpdatePasswordSerializer, UserSerializer, VerifyEmailSerializer
-from users.utils import get_verification_code, send_email_confirmation
+from users.serializers import (FollowUserSerializer, LoginSerializer,
+                            RecendVerifyEmailSerializer, RegisterSerializer,
+                              UpdatePasswordSerializer, UserSerializer, VerifyEmailSerializer)
+from users.utils import send_email_confirmation
 
 
 class RegisterAPIView(APIView):
@@ -28,17 +29,17 @@ class RegisterAPIView(APIView):
         user.is_active = False
         user.save()
 
-
-        code = get_verification_code(user=user)
-
         verification_code = str(random.randint(1000, 9999))
 
-        email_thread = threading.Thread(target=send_email_confirmation, args=(user, verification_code))
+        email_thread=threading.Thread(
+            target=send_email_confirmation, args=(user, verification_code)
+            )
         email_thread.start()
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
+
 
 class VerifyEmailAPIView(APIView):
     serailizer_class = VerifyEmailSerializer
@@ -58,6 +59,7 @@ class VerifyEmailAPIView(APIView):
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
 
+
 class ResendVerificationCodeAPIView(APIView):
     serailizer_class = RecendVerifyEmailSerializer
 
@@ -69,6 +71,7 @@ class ResendVerificationCodeAPIView(APIView):
 
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
+
 
 class LoginAPIView(APIView):
     permission_classes = [AllowAny]
@@ -85,7 +88,8 @@ class LoginAPIView(APIView):
     
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
-    
+
+
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
@@ -100,10 +104,11 @@ class UserProfileView(APIView):
         serializer.save()
 
         return Response(data=serializer.data, status=status.HTTP_202_ACCEPTED)
-    
+
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
      
+
 class UpdatePasswordAPIView(APIView):
     serializer_class = UpdatePasswordSerializer
     permission_classes = [IsAuthenticated]
@@ -113,13 +118,15 @@ class UpdatePasswordAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         user = request.user
 
-        authenticated_user = authenticate(username=user.username, password=serializer.validated_data['old_password'])
+        authenticated_user = authenticate(username=user.username,
+        password=serializer.validated_data['old_password'])
         if authenticated_user is None:
             raise serializers.ValidationError("Old passsword is invalid ⚠️")
         user.set_password(raw_password=serializer.validated_data['new_password1'])
         user.save()
         return Response(data={'detail': "Password updated"}, status=status.HTTP_202_ACCEPTED)
-    
+
+
 class FollowUserAPIView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = FollowUserSerializer
@@ -146,7 +153,7 @@ class FollowUserAPIView(APIView):
 
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
-    
+
     def get(self, request, *args, **kwargs):
         follow_type = request.query_params.get('type')
         if follow_type not in ['followers', 'following']:

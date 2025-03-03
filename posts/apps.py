@@ -6,4 +6,5 @@ class PostsConfig(AppConfig):
     name = 'posts'
 
     def ready(self):
+        # noqa: E731
         from . import signals

@@ -33,6 +33,7 @@ class CustomUserModel(AbstractUser):
 
 User = get_user_model()
 
+
 class VerificationModel(BaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='code')
     code = models.PositiveSmallIntegerField()
@@ -44,6 +45,7 @@ class VerificationModel(BaseModel):
     class Meta:
         verbose_name = 'code'
         verbose_name_plural = 'codes'
+
 
 class ProfileModel(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
@@ -58,6 +60,7 @@ class ProfileModel(models.Model):
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'
+
 
 class FollowModel(BaseModel):
     from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')

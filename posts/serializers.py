@@ -16,6 +16,7 @@ class PostAuthorSerializer(serializers.ModelSerializer):
     def get_full_name(obj):
         return obj.get_full_name()
 
+
 class PostsSerializers(serializers.ModelSerializer):
     topics = serializers.PrimaryKeyRelatedField(queryset=TopicModel.objects.all(), many=True, required=True, write_only=True)
     comments_count = serializers.SerializerMethodField()

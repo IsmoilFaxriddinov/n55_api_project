@@ -6,16 +6,19 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import viewsets
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListAPIView, ListCreateAPIView, get_object_or_404
+from rest_framework.generics import (RetrieveUpdateDestroyAPIView,
+                                    ListAPIView, ListCreateAPIView, get_object_or_404)
 from django.db.models import Count
 from django.contrib.auth import get_user_model
 
 from app_common.paginations import LargeResultsSetPagination, StandardResultsSetPagination
-from app_common.permissions import IsCommentOwner, IsOwnerOrReadOnly
-from posts.models import PostClapModel, PostCommentClapModel, PostCommentModel, PostModel, TopicModel
+from app_common.permissions import IsCommentOwner,IsOwnerOrReadOnly
+from posts.models import (PostClapModel, PostCommentClapModel,
+                        PostCommentModel, PostModel, TopicModel)
 from posts.serializers import PostClapsUserSerializer, PostCommentClapSerializer, PostCommentSerializer, PostsSerializers, TopicModelSerializer
 
 User = get_user_model()
+
 
 class PostAPIView(APIView):
     serializer_class = PostsSerializers
@@ -152,6 +155,7 @@ class PostClapsAPIView(APIView):
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
 
+
 class PostCommentListCreateAPIView(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = StandardResultsSetPagination
@@ -223,12 +227,14 @@ class CommentClapsListCreateAPIView(ListCreateAPIView):
             serializer = self.serializer_class(users, many=True)
         return Response({"claps count": claps_count, "users_count": users.count(), "users": serializer.data})
 
+
 class TopicsLIstAPIView(ListAPIView):
     queryset = TopicModel.objects.all()
     pagination_class = LargeResultsSetPagination
     permission_classes = [IsAuthenticated]
     serializer_class = TopicModelSerializer
     
+
 class TopicViewSet(viewsets.ModelViewSet):
     queryset = TopicModel.objects.all()
     serializer_class = TopicModelSerializer

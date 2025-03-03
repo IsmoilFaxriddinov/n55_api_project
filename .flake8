@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 150
+
+# Ignore specific rules that conflick with Black
+extend-ignore = 
+    E203
+    W503
+
+exclude = 
+    .git,
+    __pycache__,
+    venv,
+    .venv,
+    migrations

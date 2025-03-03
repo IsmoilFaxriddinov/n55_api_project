@@ -1,7 +1,9 @@
 from django.urls import path
 from rest_framework_simplejwt.views import (TokenRefreshView, TokenBlacklistView)
 
-from users.views import FollowUserAPIView, LoginAPIView, RegisterAPIView, ResendVerificationCodeAPIView, UpdatePasswordAPIView, UserProfileView, VerifyEmailAPIView
+from users.views import (FollowUserAPIView, LoginAPIView, RegisterAPIView,
+                          ResendVerificationCodeAPIView, UpdatePasswordAPIView,
+                            UserProfileView, VerifyEmailAPIView)
 
 app_name = 'users'
 

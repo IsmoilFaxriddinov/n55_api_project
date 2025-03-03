@@ -2,9 +2,8 @@ import random
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.urls import reverse
-
 from users.models import VerificationModel
+
 
 def get_verification_code(user):
     code = random.randint(1000, 9999)
@@ -15,6 +14,7 @@ def get_verification_code(user):
     
     VerificationModel.objects.create(user=user, code=code, expire_minutes=1)
     return code
+
 
 def send_email_confirmation(user, code):
     subject = "Confirm Your Email Address"
