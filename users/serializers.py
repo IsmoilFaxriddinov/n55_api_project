@@ -11,6 +11,8 @@ from users.models import FollowModel, VerificationModel
 from users.utils import send_email_confirmation
 
 User = get_user_model()
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -18,7 +20,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         token['username'] = user.username
 
-        return token                                                   
+        return token
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True)
@@ -35,15 +38,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         password2 = attrs.get('password2')
         if password1 != password2:
             raise serializers.ValidationError("Passwords does not match")
-        
+
         validate_password(password=password1)
         return attrs
-    
+
     def create(self, validated_data):
         validated_data.pop('password1')
         validated_data.pop('password2')
         user = User.objects.create(**validated_data)
         return user
+
 
 class VerifyEmailSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -98,7 +102,6 @@ class RecendVerifyEmailSerializer(serializers.Serializer):
         return attrs
 
 
-
 class LoginSerializer(serializers.Serializer):
     email_or_username = serializers.CharField(max_length=125)
     password = serializers.CharField()
@@ -112,7 +115,6 @@ class LoginSerializer(serializers.Serializer):
         except User.DoesNotExist:
             user = User.objects.get(email=email_or_username)
 
-        
         if user is None:
             raise serializers.ValidationError({
                 "success": False,
@@ -124,9 +126,10 @@ class LoginSerializer(serializers.Serializer):
                 "success": False,
                 "detail": "Username or passsword is invalid"
             })
-            
+
         attrs['user'] = authenticated_user
         return authenticated_user
+
 
 class UserSerializer(serializers.ModelSerializer):
     short_bio = serializers.CharField(source="profile.short_bio")
@@ -137,7 +140,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email', 'username', 'short_bio', 'avatar', 'about', 'pronouns']
-    
 
     def update(self, instance, validated_data):
         # Extract nested profile data
@@ -160,6 +162,7 @@ class UserSerializer(serializers.ModelSerializer):
 
         return instance
 
+
 class UpdatePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(max_length=125)
     new_password1 = serializers.CharField(max_length=125)
@@ -168,12 +171,13 @@ class UpdatePasswordSerializer(serializers.Serializer):
     def validate(self, attrs):
         new_password1 = attrs.get('new_password1')
         new_password2 = attrs.get('new_password2')
-        
+
         if new_password1 != new_password2:
             raise serializers.ValidationError("Passwords does not match")
-        
+
         validate_password(password=new_password1)
         return attrs
+
 
 class FollowUserSerializer(serializers.ModelSerializer):
     class Meta:

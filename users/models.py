@@ -1,4 +1,3 @@
-from encodings.punycode import T
 import random
 from django.db import models
 from app_common.models import BaseModel
@@ -10,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 class CustomUserModel(AbstractUser):
     email = models.EmailField(unique=True)
-    
+
     def get_tokens(self):
         refresh = RefreshToken.for_user(self)
         # refresh.set_exp(from_time=timezone.now(), lifetime=timedelta(minutes=1))
@@ -20,7 +19,7 @@ class CustomUserModel(AbstractUser):
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }
-    
+
     def get_verification(self, expire_minutes=2):
         code = random.randint(1000, 9999)
         user_code = VerificationModel.objects.filter(user=self, code=code)
@@ -29,7 +28,7 @@ class CustomUserModel(AbstractUser):
             self.get_verification_code()
         VerificationModel.objects.create(user=self, code=code, expire_minutes=expire_minutes)
         return code
-            
+
 
 User = get_user_model()
 
@@ -41,7 +40,7 @@ class VerificationModel(BaseModel):
 
     def __str__(self):
         return str(self.code)
-    
+
     class Meta:
         verbose_name = 'code'
         verbose_name_plural = 'codes'
@@ -56,7 +55,7 @@ class ProfileModel(models.Model):
 
     def __str__(self):
         return self.user.username
-    
+
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'
@@ -68,7 +67,7 @@ class FollowModel(BaseModel):
 
     def __str__(self):
         return f"{self.from_user.username} following to {self.to_user.username}"
-    
+
     class Meta:
         verbose_name = 'follower'
         verbose_name_plural = 'followers'

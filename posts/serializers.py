@@ -29,7 +29,7 @@ class PostsSerializers(serializers.ModelSerializer):
     @staticmethod
     def get_claps_count(obj):
         return obj.claps.count()
-    
+
     @staticmethod
     def get_comments_count(obj):
         return obj.comments.count()
@@ -47,11 +47,11 @@ class PostClapsUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['short_bio', 'avatar', 'username', 'is_followed']
-    
+
     def get_is_followed(self, obj):
         user = self.context.get('user')
         return user.following.filter(to_user_id=obj.id).exists()
-    
+
 
 class PostCommentSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()

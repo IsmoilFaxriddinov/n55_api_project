@@ -12,7 +12,7 @@ from django.db.models import Count
 from django.contrib.auth import get_user_model
 
 from app_common.paginations import LargeResultsSetPagination, StandardResultsSetPagination
-from app_common.permissions import IsCommentOwner,IsOwnerOrReadOnly
+from app_common.permissions import IsCommentOwner, IsOwnerOrReadOnly
 from posts.models import (PostClapModel, PostCommentClapModel,
                         PostCommentModel, PostModel, TopicModel)
 from posts.serializers import PostClapsUserSerializer, PostCommentClapSerializer, PostCommentSerializer, PostsSerializers, TopicModelSerializer
@@ -140,7 +140,6 @@ class PostClapsAPIView(APIView):
     
         return Response(data={"claps_count": claps_count}, status=status.HTTP_201_CREATED)
 
-    
     def get_claps_count(self, post):
         return PostClapModel.objects.create(user=self.request.user, post=post)
 
@@ -245,3 +244,4 @@ class TopicViewSet(viewsets.ModelViewSet):
         if self.request.method in ["POST", "GET"]:
             return [IsAuthenticated()]
         return [IsAdminUser()]
+    

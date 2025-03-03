@@ -12,7 +12,7 @@ class TopicModel(BaseModel):
 
     def __str__(self):
         return self.title
-    
+
     class Meta:
         verbose_name = 'topic'
         verbose_name_plural = 'topics'
@@ -29,7 +29,7 @@ class PostModel(BaseModel):
 
     def __str__(self):
         return self.title
-    
+
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
@@ -55,7 +55,7 @@ class PostCommentModel(BaseModel):
 
     def __str__(self):
         return f"{self.user.username} comment to {self.post.id} like {self.comment}"
-    
+
     class Meta:
         verbose_name = 'post comment'
         verbose_name_plural = 'post comments'
@@ -79,10 +79,10 @@ class FollowTopicModel(BaseModel):
 
     def get_titles(self):
         return [topic.title for topic in self.topics.all]
-    
+
     def __str__(self):
         return f"{self.user.username} following to {self.get_titles()}"
-    
+
     class Meta:
         verbose_name = 'Topics follower'
         verbose_name_plural = 'Topic followers'

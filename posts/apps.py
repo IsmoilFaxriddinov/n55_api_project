@@ -1,10 +1,10 @@
 from django.apps import AppConfig
 
 
-class PostsConfig(AppConfig):
+class UsersConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'posts'
+    name = 'users'
 
     def ready(self):
         # noqa: E731
-        from . import signals
+        from . import signals  # noqa: F401  <- Suppress the warning

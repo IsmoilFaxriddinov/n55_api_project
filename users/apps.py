@@ -6,5 +6,5 @@ class UsersConfig(AppConfig):
     name = 'users'
 
     def ready(self):
-        # noqa: E731 
-        from . import signals
+        # noqa: E731
+        from . import signals  # noqa: F401  <- Suppress the warning
