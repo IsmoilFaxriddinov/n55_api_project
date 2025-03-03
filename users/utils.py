@@ -11,14 +11,14 @@ def get_verification_code(user):
     if user_code.exists():
         user_code.delete()
         get_verification_code(user=user)
-    
+
     VerificationModel.objects.create(user=user, code=code, expire_minutes=1)
     return code
 
 
 def send_email_confirmation(user, code):
     subject = "Confirm Your Email Address"
-    
+
     html_message = render_to_string(
         template_name='auth/email_confirmation.html',
         context={

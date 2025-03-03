@@ -9,3 +9,4 @@ User = get_user_model()
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, **kwargs):
     ProfileModel.objects.get_or_create(user=instance)
+    

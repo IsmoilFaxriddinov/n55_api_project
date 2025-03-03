@@ -12,3 +12,4 @@ exclude =
     venv,
     .venv,
     migrations
+    

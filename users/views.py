@@ -11,9 +11,17 @@ from django.contrib.auth import authenticate
 
 
 from users.models import FollowModel
-from users.serializers import (FollowUserSerializer, LoginSerializer,
-                            RecendVerifyEmailSerializer, RegisterSerializer,
-                              UpdatePasswordSerializer, UserSerializer, VerifyEmailSerializer)
+from users.serializers import (
+    FollowUserSerializer,
+    LoginSerializer,
+    RecendVerifyEmailSerializer,
+    RegisterSerializer,
+    UpdatePasswordSerializer,
+    UserSerializer,
+    VerifyEmailSerializer,
+)
+
+
 from users.utils import send_email_confirmation
 
 
@@ -31,12 +39,12 @@ class RegisterAPIView(APIView):
 
         verification_code = str(random.randint(1000, 9999))
 
-        email_thread=threading.Thread(
+        email_thread = threading.Thread(
             target=send_email_confirmation, args=(user, verification_code)
             )
         email_thread.start()
         return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        
+
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
 
@@ -53,9 +61,8 @@ class VerifyEmailAPIView(APIView):
         user_code.user.save()
         tokens = user_code.user.get_tokens()
         user_code.delete()
-        
         return Response(data=tokens, status=status.HTTP_200_OK)
-    
+
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
 
@@ -66,7 +73,6 @@ class ResendVerificationCodeAPIView(APIView):
     def post(self, request):
         serializer = self.serailizer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
         return Response(data={"success": True, "detail": "Code is send"}, status=status.HTTP_200_OK)
 
     def get_serializer(self, *args, **kwargs):
@@ -85,7 +91,7 @@ class LoginAPIView(APIView):
         tokens = user.get_tokens()
 
         return Response(data=tokens, status=status.HTTP_200_OK)
-    
+
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
 
@@ -97,7 +103,7 @@ class UserProfileView(APIView):
     def get(self, request):
         serializer = self.serializer_class(request.user)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
-    
+
     def patch(self, request):
         serializer = self.serializer_class(instance=request.user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
@@ -107,7 +113,7 @@ class UserProfileView(APIView):
 
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
-     
+
 
 class UpdatePasswordAPIView(APIView):
     serializer_class = UpdatePasswordSerializer
@@ -119,8 +125,8 @@ class UpdatePasswordAPIView(APIView):
         user = request.user
 
         authenticated_user = authenticate(
-        username=user.username,
-        password=serializer.validated_data['old_password']
+            username=user.username,
+            password=serializer.validated_data['old_password']
         )
 
         if authenticated_user is None:
