@@ -118,8 +118,11 @@ class UpdatePasswordAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         user = request.user
 
-        authenticated_user = authenticate(username=user.username,
-        password=serializer.validated_data['old_password'])
+        authenticated_user = authenticate(
+        username=user.username,
+        password=serializer.validated_data['old_password']
+        )
+
         if authenticated_user is None:
             raise serializers.ValidationError("Old passsword is invalid ⚠️")
         user.set_password(raw_password=serializer.validated_data['new_password1'])
