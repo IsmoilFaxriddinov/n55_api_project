@@ -8,7 +8,7 @@ from posts.models import PostModel
 
 @receiver(pre_save, sender=PostModel)
 def generate_slag_for_post(sender, instance, **kwargs):
-    if not instance.slug:   
+    if not instance.slug:
         original_blog = slugify(instance.title)
         slug = original_blog
         count = 0
@@ -17,4 +17,3 @@ def generate_slag_for_post(sender, instance, **kwargs):
             count += 1
 
         instance.slug = slug
-

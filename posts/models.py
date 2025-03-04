@@ -41,7 +41,7 @@ class PostClapModel(BaseModel):
 
     def __str__(self):
         return f"{self.post.id} clapped by {self.user.username}"
-    
+
     class Meta:
         verbose_name = 'post clap'
         verbose_name_plural = 'post claps'
@@ -67,7 +67,7 @@ class PostCommentClapModel(BaseModel):
 
     def __str__(self):
         return f"{self.comment.comment} clapped by {self.user.username}"
-    
+
     class Meta:
         verbose_name = 'post comment clap'
         verbose_name_plural = 'post comments claps'

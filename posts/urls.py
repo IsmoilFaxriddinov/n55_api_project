@@ -1,10 +1,16 @@
-from email.mime import base
 from rest_framework.routers import DefaultRouter
 from django.urls import path
+from posts.views import (
+    CommentChildrenListAPIView,
+    CommentClapsListCreateAPIView,
+    PersonalListView,
+    PostAPIView,
+    PostClapsAPIView,
+    PostCommentListCreateAPIView,
+    PostRetrieveUpdateDestroyAPIView,
+    TopicViewSet,
+)
 
-from posts.views import (CommentChildrenListAPIView, CommentClapsListCreateAPIView,
-                        PersonalListView, PostAPIView, PostClapsAPIView, PostCommentListCreateAPIView,
-                        PostRetrieveUpdateDestroyAPIView, TopicViewSet)
 
 app_name = 'posts'
 
@@ -25,5 +31,3 @@ urlpatterns += [
     path("comments/<int:pk>/", CommentChildrenListAPIView.as_view(), name="comments_children"),
     path("comments/<int:pk>/claps", CommentClapsListCreateAPIView.as_view(), name="claps")
 ] + router.urls
-
-
