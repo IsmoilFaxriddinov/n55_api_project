@@ -7,7 +7,7 @@ from app_common.models import BaseModel
 User = get_user_model()
 
 
-class TopicModel(BaseModel):
+class TopicModel(BaseModel):  # Ensure BaseModel is correctly imported
     title = models.CharField(max_length=125)
 
     def __str__(self):
@@ -16,6 +16,8 @@ class TopicModel(BaseModel):
     class Meta:
         verbose_name = 'topic'
         verbose_name_plural = 'topics'
+        
+
 
 
 class PostModel(BaseModel):
@@ -33,6 +35,7 @@ class PostModel(BaseModel):
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
+        app_label = 'posts'
 
 
 class PostClapModel(BaseModel):
@@ -45,6 +48,7 @@ class PostClapModel(BaseModel):
     class Meta:
         verbose_name = 'post clap'
         verbose_name_plural = 'post claps'
+        app_label = 'posts'
 
 
 class PostCommentModel(BaseModel):
@@ -59,6 +63,7 @@ class PostCommentModel(BaseModel):
     class Meta:
         verbose_name = 'post comment'
         verbose_name_plural = 'post comments'
+        app_label = 'posts'
 
 
 class PostCommentClapModel(BaseModel):
@@ -71,6 +76,7 @@ class PostCommentClapModel(BaseModel):
     class Meta:
         verbose_name = 'post comment clap'
         verbose_name_plural = 'post comments claps'
+        app_label = 'posts'
 
 
 class FollowTopicModel(BaseModel):
@@ -86,3 +92,4 @@ class FollowTopicModel(BaseModel):
     class Meta:
         verbose_name = 'Topics follower'
         verbose_name_plural = 'Topic followers'
+        app_label = 'posts'
