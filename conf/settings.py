@@ -14,7 +14,6 @@ from datetime import timedelta
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from django.conf import settings
 
 load_dotenv()
 
