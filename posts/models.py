@@ -16,8 +16,6 @@ class TopicModel(BaseModel):  # Ensure BaseModel is correctly imported
     class Meta:
         verbose_name = 'topic'
         verbose_name_plural = 'topics'
-        
-
 
 
 class PostModel(BaseModel):
